@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const scheduleSchema = new mongoose.Schema({
   tutorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "tutor",
+    ref: "user",
     required: true
   },
   tutorName: {

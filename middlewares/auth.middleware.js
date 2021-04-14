@@ -8,6 +8,9 @@ module.exports = {
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   },
+  checkPassword: (plainPass, password) => {
+    return bcrypt.compareSync(plainPass, password);
+  },
   getToken: user => {
     return jwt.sign({
       _id: user._id,
@@ -15,7 +18,7 @@ module.exports = {
       email: user.email,
       isAdmin: user.isAdmin,
       role: user.role
-    }, process.env.JWT_SECRET);
+    }, `${process.env.JWT_SECRET}`);
   }, 
   isAuth: (req, res, next) => {
     const token = req.header('auth-token');

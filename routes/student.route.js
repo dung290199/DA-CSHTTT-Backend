@@ -1,9 +1,9 @@
-const express = require('express');
+// const express = require('express');
 
-const router = express.Router();
+// const router = express.Router();
 
-const studentController = require('../controllers/student.controller');
+// const studentController = require('../controllers/student.controller');
 
-router.post('/register', studentController.register);
+// // router.post('/register', studentController.register);
 
-module.exports = router;
+// module.exports = router;
