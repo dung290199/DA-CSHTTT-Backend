@@ -18,21 +18,27 @@ module.exports = {
     if (signinUser) {
       const token = authMiddleware.getToken(signinUser);
       let data = {
-        _id: signinUser.id,
-        username: signinUser.username,
-        email: signinUser.email,
-        role: signinUser.role,
-        fullname: signinUser.fullname,
-        birthday: signinUser.birthday,
-        phone: signinUser.phone,
-        address: signinUser.address,
-        gender: signinUser.gender,
-        picture: signinUser.picture,
+        token: token,
+        user: {
+          _id: signinUser.id,
+          username: signinUser.username,
+          email: signinUser.email,
+          role: signinUser.role,
+          fullname: signinUser.fullname,
+          birthday: signinUser.birthday,
+          phone: signinUser.phone,
+          address: signinUser.address,
+          gender: signinUser.gender,
+          picture: signinUser.picture,
+        }
       };
       data = signinUser.role
         ? Object.assign({}, data, {
           ...data,
-          CV: signinUser.CV
+          user: {
+            ...data.user,
+            CV: signinUser.CV
+          }
         })
         :data;
       console.log("data", data);
@@ -65,18 +71,22 @@ module.exports = {
     
     const newUser = await user.save();
     if (newUser) {
+      const token = authMiddleware.getToken(newUser);
       let data = {
-        _id: newUser.id,
-        username: newUser.username,
-        password: newUser.password,
-        email: newUser.email,
-        role: newUser.role,
-        fullname: newUser.fullname,
-        birthday: newUser.birthday,
-        phone: newUser.phone,
-        address: newUser.address,
-        gender: newUser.gender,
-        picture: newUser.picture,
+        token: token,
+        user: {
+          _id: newUser.id,
+          username: newUser.username,
+          password: newUser.password,
+          email: newUser.email,
+          role: newUser.role,
+          fullname: newUser.fullname,
+          birthday: newUser.birthday,
+          phone: newUser.phone,
+          address: newUser.address,
+          gender: newUser.gender,
+          picture: newUser.picture,
+        }
       }
       if( cvDetail ) {
         const cv = new CV({
@@ -84,10 +94,19 @@ module.exports = {
           CV: cvDetail
         });
         const newCV = await cv.save();
-        data = newCV ? { ...data, CV: newCV.CV } : data;
+        data = newCV ? { 
+                        ...data, 
+                        user: {
+                          ...data.user,
+                          CV: newCV.CV
+                        } 
+                      } 
+                      : data;
         console.log("go out");
       }
-      return res.status(201).send({ data: data });
+      return res.status(201)
+              .header('auth-token', token)
+              .send({ data: data });
     } else {
       return res.status(401).send({ message: "Invalid tutor data" });
     }

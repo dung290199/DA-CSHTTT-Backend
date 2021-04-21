@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); 
+const bodyParser = require('body-parser');
 
 // const studentRoute = require('./routes/student.route');
 // const tutorRoute = require('./routes/tutor.route');
@@ -10,6 +12,13 @@ const app = express();
 
 //BodyParser middleware
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// below, also change this to
+app.use('/public', express.static(__dirname + '/public'));
+
+//CORS
+app.use(cors());
 
 mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
