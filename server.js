@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors'); 
 const bodyParser = require('body-parser');
 
-// const studentRoute = require('./routes/student.route');
-// const tutorRoute = require('./routes/tutor.route');
+const userRoute = require('./routes/user.route');
 const authRoute = require('./routes/auth.route');
 
 require('dotenv').config();
@@ -31,8 +30,8 @@ mongoose.connect(process.env.DB_URL, {
 app.get('/', (req, res) => {
     res.send("Hello node");
 });
-// app.use('/api/student', studentRoute);
-// app.use('/api/tutor', tutorRoute);
+
+app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 
 const PORT = process.env.PORT || 5000;

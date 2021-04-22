@@ -32,7 +32,8 @@ module.exports = {
           picture: signinUser.picture,
         }
       };
-      data = signinUser.role
+      const cv = (signinUser.role === 'TUTOR') ? await CV.findOne({tutorId: signinUser.id}) : null;
+      data = cv
         ? Object.assign({}, data, {
           ...data,
           user: {
