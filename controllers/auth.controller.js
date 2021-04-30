@@ -45,7 +45,7 @@ module.exports = {
       console.log("data", data);
       return res.status(200)
               .header('auth-token', token)
-              .send({ data: data });
+              .send(data);
     } else {
       return res.status(401).send({ message: "username or email existed!"});
     }
@@ -107,7 +107,7 @@ module.exports = {
       }
       return res.status(201)
               .header('auth-token', token)
-              .send({ data: data });
+              .send(data);
     } else {
       return res.status(401).send({ message: "Invalid tutor data" });
     }
