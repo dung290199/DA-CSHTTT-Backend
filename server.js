@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const userRoute = require('./routes/user.route');
 const authRoute = require('./routes/auth.route');
+const uploadRoute = require('./routes/upload.route');
 
 require('dotenv').config();
 const app = express();
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/uploads', uploadRoute);
 
 const PORT = process.env.PORT || 5000;
 
