@@ -2,6 +2,9 @@ const User = require('../models/user.model');
 const Schedule = require('../models/schedule.model');
 const auth = require('../middlewares/auth.middleware');
 const CV = require('../models/cv.model');
+const config = require('../config');
+const { checkPassword, hashPassword } = require('../middlewares/auth.middleware');
+const mongoose = require('mongoose');
 
 module.exports = {
   createSchedule: async (req, res, next) => {
@@ -68,18 +71,15 @@ module.exports = {
     const id = req.params;
     const { username, email, fullname, birthday, phone, address, gender, picture } = req.body;
     const user = await User.findById(id);
-    const newUser = { 
-      ...user,
-      username: username,
-      email: email,
-      fullname: fullname,
-      birthday: birthday,
-      phone: phone,
-      address: address,
-      gender: gender,
-      picture: picture
-    }
-    const updatedUser = await newUser.save();
+    user.username = username,
+    user.email = email,
+    user.fullname = fullname,
+    user.birthday = birthday,
+    user.phone = phone,
+    user.address = address,
+    user.gender = gender,
+    user.picture = picture
+    const updatedUser = await user.save();
 
     if (updatedUser) {
       let data = {
@@ -107,11 +107,23 @@ module.exports = {
   },
 
   updatePassword: async (req, res, next) => {
-    const id = req.params;
-    const password = req.body;
-    const user = await User.findById(id);
-    const newUser = { ...user, password: password };
-    const updatedUser = await newUser.save();
+    const id = req.params.id;
+    const { oldPassword, newPassword } = req.body;
+    // const newId = mongoose.Types.ObjectId(id);
+    console.log("id: ", id);
+    const user = await User.findOne({_id: id});
+    if (!user) {
+      return res.send({message: "User not existed!"});
+    }
+
+    console.log("pass: ", user.password);
+    console.log("oldPass: ", checkPassword("abc", "abc"));
+
+    if (!checkPassword(oldPassword, user.password)) {
+      return res.status(401).send({message: "Old password is not exact!"});
+    }
+    user.password = await hashPassword(newPassword);
+    const updatedUser = await user.save();
 
     if (updatedUser) {
       let data = {

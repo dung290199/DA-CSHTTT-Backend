@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const CV = require('../models/cv.model');
 const authMiddleware = require('../middlewares/auth.middleware');
 const config = require('../config');
+const router = require('../routes/user.route');
 
 module.exports = {
   login: async (req, res, next) => {
@@ -9,6 +10,10 @@ module.exports = {
     const signinUser = await User.findOne({
       username: username,
     });
+
+    if (!signinUser) {
+      return routeres.status(401).send({ message: "Invalid username!" });
+    }
 
     if(!authMiddleware.checkPassword(password, signinUser.password)){
       return res.status(401).send({ message: "Invalid password!"});
