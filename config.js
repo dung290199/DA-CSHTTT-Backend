@@ -1,5 +1,5 @@
 module.exports = {
-  userRole: [ "STUDENT", "TUTOR" ],
+  userRole: [ "STUDENT", "TUTOR", "ADMIN" ],
   gender: {
     Nam: false,
     Nu: true

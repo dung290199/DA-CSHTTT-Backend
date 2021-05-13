@@ -3,12 +3,12 @@ const Schedule = require('../models/schedule.model');
 const auth = require('../middlewares/auth.middleware');
 const CV = require('../models/cv.model');
 const config = require('../config');
-const { checkPassword, hashPassword } = require('../middlewares/auth.middleware');
+const { checkPassword, hashPassword, getToken } = require('../middlewares/auth.middleware');
 const mongoose = require('mongoose');
 
 module.exports = {
   createSchedule: async (req, res, next) => {
-    const { tutorId, tutorName, subject, grade, time, price, image } = req.body;
+    const { tutorId, tutorName, subject, grade, time, price, image, address } = req.body;
     const schedule = new Schedule({
       tutorId: tutorId,
       tutorName: tutorName,
@@ -16,7 +16,8 @@ module.exports = {
       grade: grade,
       time: time,
       price: price,
-      image: image
+      image: image,
+      address: address
     });
 
     const newSchedule = await schedule.save();
@@ -32,6 +33,7 @@ module.exports = {
         grade: newSchedule.grade,
         price: newSchedule.price,
         image: newSchedule.image,
+        address: newSchedule.address
       });
     } else {
       return res.status(401).send({ message: "Invalid schedule data" });
@@ -68,9 +70,9 @@ module.exports = {
   },
 
   updateUser: async (req, res, next) => {
-    const id = req.params;
+    const id = req.params.id;
     const { username, email, fullname, birthday, phone, address, gender, picture } = req.body;
-    const user = await User.findById(id);
+    const user = await User.findOne({_id: id});
     user.username = username,
     user.email = email,
     user.fullname = fullname,
@@ -83,7 +85,6 @@ module.exports = {
 
     if (updatedUser) {
       let data = {
-        _id: updatedUser.id,
         username: updatedUser.username,
         email: updatedUser.email,
         role: updatedUser.role,
@@ -101,7 +102,7 @@ module.exports = {
         
       console.log("data", data);
       return res.status(200)
-              .send({ data: data, message: "Change password success!" });
+              .send({ data, message: "Change password success!" });
     }
     return res.send({ message: "Update user failed!!" });
   },
@@ -148,5 +149,46 @@ module.exports = {
               .send({ data: data, message: "Change password success!" });
     }
     return res.send({message: "Change password failed!"});
+  },
+
+  createAdmin: async (req, res, next) => {
+    const hashedPassword = await hashPassword("admin");
+    const admin = new User({
+      username: "admin",
+      password: hashedPassword,
+      email: "admin@gmail.com",
+      role: "ADMIN",
+      fullname: "admin",
+      birthday: "29/08/1999",
+      gender: true,
+      isAdmin: true,
+      phone: "01478963215"
+    });
+    
+    const newAdmin = await admin.save();
+    if (newAdmin) {
+      const token = getToken(newAdmin);
+      let data = {
+        token: token,
+        user: {
+          _id: newAdmin.id,
+          username: newAdmin.username,
+          password: newAdmin.password,
+          email: newAdmin.email,
+          role: newAdmin.role,
+          fullname: newAdmin.fullname,
+          birthday: newAdmin.birthday,
+          phone: newAdmin.phone,
+          address: newAdmin.address,
+          gender: newAdmin.gender,
+          picture: newAdmin.picture,
+        }
+      }
+      return res.status(201)
+              .header('auth-token', token)
+              .send(data);
+    } else {
+      return res.status(401).send({ message: "Invalid admin data" });
+    }
   }
 };

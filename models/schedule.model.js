@@ -10,15 +10,16 @@ const scheduleSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  subject: {
+  subject: [{
     type: String,
     required: true
-  },
-  grade: {
-    type: Number,
+  }],
+  grade: [{
+    type: String,
     required: true
-  },
+  }],
   time: [{ type: String }],
+  address: [{type: String}],
   price: {
     type: Number,
   },

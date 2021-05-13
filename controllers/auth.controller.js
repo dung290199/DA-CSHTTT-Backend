@@ -12,7 +12,7 @@ module.exports = {
     });
 
     if (!signinUser) {
-      return routeres.status(401).send({ message: "Invalid username!" });
+      return res.status(401).send({ message: "Invalid username!" });
     }
 
     if(!authMiddleware.checkPassword(password, signinUser.password)){
@@ -38,12 +38,13 @@ module.exports = {
         }
       };
       const cv = (signinUser.role === 'TUTOR') ? await CV.findOne({tutorId: signinUser.id}) : null;
+      console.log("cv: ", cv);
       data = cv
         ? Object.assign({}, data, {
           ...data,
           user: {
             ...data.user,
-            CV: signinUser.CV
+            CV: cv.CV
           }
         })
         :data;
@@ -59,7 +60,8 @@ module.exports = {
   register: async (req, res, next) => {
     const { username, password, email, fullname, birthday, phone, address, gender, picture, role } = req.body;
 
-    const cvDetail = config.userRole[1] === role ? req.body.cv : null; 
+    const cvDetail = config.userRole[1] === role ? req.body.CV : null; 
+    console.log("CV: ", cvDetail);
     const hashedPassword = await authMiddleware.hashPassword(password);
 
     const user = new User({
@@ -108,7 +110,7 @@ module.exports = {
                         } 
                       } 
                       : data;
-        console.log("go out");
+        console.log("data: ", data);
       }
       return res.status(201)
               .header('auth-token', token)
