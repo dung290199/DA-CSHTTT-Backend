@@ -21,14 +21,15 @@ module.exports = {
     }, `${process.env.JWT_SECRET}`);
   }, 
   isAuth: (req, res, next) => {
-    const token = req.header('auth-token');
+    const token = req.headers.authorization;
     if (!token) {
       return res.status(401).send({message: 'Access denied!'})
     }
      try{
-       const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
-       req.user = verifiedUser;
-       next();
+      const onlyToken = token.slice(7, token.length);
+      const verifiedUser = jwt.verify(onlyToken, process.env.JWT_SECRET);
+      req.user = verifiedUser;
+      next();
      } catch(e){
        return res.status(400).send({message: 'Invalid token'});
      }

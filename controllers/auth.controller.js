@@ -1,4 +1,4 @@
-const User = require('../models/user.model');
+const { User } = require('../models/user.model');
 const CV = require('../models/cv.model');
 const authMiddleware = require('../middlewares/auth.middleware');
 const config = require('../config');
@@ -61,7 +61,6 @@ module.exports = {
     const { username, password, email, fullname, birthday, phone, address, gender, picture, role } = req.body;
 
     const cvDetail = config.userRole[1] === role ? req.body.CV : null; 
-    console.log("CV: ", cvDetail);
     const hashedPassword = await authMiddleware.hashPassword(password);
 
     const user = new User({

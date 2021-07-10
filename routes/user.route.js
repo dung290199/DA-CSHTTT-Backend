@@ -5,6 +5,22 @@ const userController = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const isAuth = authMiddleware.isAuth;
 
+router.post('/grade/new', isAuth, userController.createGrade); // Admin
+router.post('/subject/new', isAuth, userController.createSubject); // Admin
+router.get('/grade', isAuth, userController.getGrades);
+router.get('/subject', isAuth, userController.getSubjects);
+
+router.get('/course/all', isAuth, userController.getAllCourses);
+router.get('/course', isAuth, userController.getCourses);
+router.post('/course/new', isAuth, userController.createCourse);
+router.post('/course/register', isAuth, userController.registerCourse);
+router.get('/course/registerRequests', isAuth, userController.getAllRegisterCourseRequests);
+
+router.delete('/course/registerRequests/:registerRequset_id', isAuth, userController.removeRegisterCourseRequest);
+router.get('/course/:course_id', isAuth, userController.getCourseById);
+
+router.put('/addToCourse', isAuth, userController.addStudentToCourse);
+
 router.post('/schedule/new', isAuth, userController.createSchedule);
 router.get('/create-admin', userController.createAdmin);
 
