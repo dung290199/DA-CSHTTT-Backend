@@ -264,9 +264,9 @@ module.exports = {
     if (registerRequest.tutor_id.equals(req.user._id)) {
       registerRequest.remove((err, doc) => {
         if (err) {
-          console.log('err: ', err);
+          return res.status(500).send({ message: "Failed to remove register request!" });
         } else {
-          console.log('doc: ', doc);
+          return res.status(200).send({ message: "Delete success" });
         }
       })
     } else {
@@ -367,6 +367,15 @@ module.exports = {
       return res.status(200).send({ subjects });
     } else {
       return res.status(400).send({ message: 'Failed to create grade!' })
+    }
+  },
+
+  getAllTutors: async (req, res, next) => {
+    const tutors = await User.find({ role: 'TUTOR' });
+    if (tutors) {
+      return res.status(200).send({ tutors });
+    } else {
+      return res.status(400).send({ message: 'Failed to get list of tutors!' })
     }
   },
 };

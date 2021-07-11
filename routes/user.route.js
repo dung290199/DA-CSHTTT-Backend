@@ -24,6 +24,8 @@ router.put('/addToCourse', isAuth, userController.addStudentToCourse);
 router.post('/schedule/new', isAuth, userController.createSchedule);
 router.get('/create-admin', userController.createAdmin);
 
+router.get('/tutor/all', isAuth, userController.getAllTutors);
+
 router.put("/:id/password", isAuth, userController.updatePassword);
 router.put("/:id", isAuth, userController.updateUser);
 router.get("/:id", isAuth, userController.getUser);
