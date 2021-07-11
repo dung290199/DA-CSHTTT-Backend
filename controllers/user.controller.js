@@ -270,9 +270,6 @@ module.exports = {
         }
       })
     } else {
-      console.log('failed!!!!!!!!!!!');
-      console.log('registerRequest: ', registerRequest);
-      console.log('request: ', req.user);
       return res.status(400).send({ message: "Request not found!" });
     }
     const registerCourseRequests = await RegisterCourse.find({ 'tutor_id': req.user._id });
@@ -376,6 +373,47 @@ module.exports = {
       return res.status(200).send({ tutors });
     } else {
       return res.status(400).send({ message: 'Failed to get list of tutors!' })
+    }
+  },
+
+  deleteTutorById: async (req, res, next) => {
+    const { id } = req.params;
+    const tutor = await User.findOne({ _id: id, role: 'TUTOR' });
+    if (tutor) {
+      tutor.remove((err, doc) => {
+        if (err) {
+          return res.status(400).send({ message: "Failed to delete tutor!" });
+        } else {
+          return res.status(200).send({ message: 'Delete success!' })
+        }
+      })
+    } else {
+      return res.status(400).send({ message: 'Tutor not found!' })
+    }
+  },
+
+  getAllStudents: async (req, res, next) => {
+    const tutors = await User.find({ role: 'STUDENT' });
+    if (tutors) {
+      return res.status(200).send({ tutors });
+    } else {
+      return res.status(400).send({ message: 'Failed to get list of students!' })
+    }
+  },
+
+  deleteStudentById: async (req, res, next) => {
+    const { id } = req.params;
+    const student = await User.findOne({ _id: id, role: 'STUDENT' });
+    if (tutor) {
+      student.remove((err, doc) => {
+        if (err) {
+          return res.status(400).send({ message: "Failed to delete student!" });
+        } else {
+          return res.status(200).send({ message: 'Delete success!' })
+        }
+      })
+    } else {
+      return res.status(400).send({ message: 'Student not found!' })
     }
   },
 };

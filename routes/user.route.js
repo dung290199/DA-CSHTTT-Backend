@@ -25,6 +25,10 @@ router.post('/schedule/new', isAuth, userController.createSchedule);
 router.get('/create-admin', userController.createAdmin);
 
 router.get('/tutor/all', isAuth, userController.getAllTutors);
+router.delete('/tutor/:id', isAuth, userController.deleteTutorById);
+
+router.get('/student/all', isAuth, userController.getAllStudents);
+router.delete('/tutor/:id', isAuth, userController.deleteStudentById);
 
 router.put("/:id/password", isAuth, userController.updatePassword);
 router.put("/:id", isAuth, userController.updateUser);
