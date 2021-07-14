@@ -12,6 +12,7 @@ const mongoose = require('mongoose');
 module.exports = {  
   getUser: async (req, res, next) => {
     const id = req.params;
+    if (!req.user.isAdmin && !req.user._id.equals(id)) return res.status(401).send({ message: "Unauthorized!" });
     const user = await User.findById(id);
 
     if (user) {
@@ -40,7 +41,6 @@ module.exports = {
   },
 
   updateUser: async (req, res, next) => {
-    console.log('update user');
     const id = req.params.id;
     const { username, email, fullname, birthday, phone, address, gender, picture } = req.body;
     const user = await User.findOne({_id: id});
