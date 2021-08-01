@@ -35,12 +35,12 @@ router.post("/", upload.single("image"), (req, res) => {
     .then((result) => {
       return res.status(200).send({
         message: "success",
-        result,
+        data: result,
       });
     }).catch((error) => {
       return res.status(500).send({
         message: "failure",
-        error,
+        data: error,
       });
     });
 });
