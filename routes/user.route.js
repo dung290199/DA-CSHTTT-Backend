@@ -14,11 +14,12 @@ router.get('/subject', isAuth, userController.getSubjects);
 router.get('/course/all', isAuth, userController.getAllCourses);
 router.get('/course', isAuth, userController.getCourses);
 router.post('/course/new', isAuth, userController.createCourse);
-router.post('/course/register', isAuth, userController.registerCourse);
-router.get('/course/tutor/registerRequests', isAuth, userController.getAllRegisterCourseRequests);
-router.get('/course/student/registerRequests', isAuth, userController.getRegisterRequestsOfStudent);
 
-router.delete('/course/registerRequests/:registerRequset_id', isAuth, userController.removeRegisterCourseRequest);
+router.post('/course/register', isAuth, userController.registerCourse); // đăng ký hoc
+router.get('/course/tutor/registerRequests', isAuth, userController.getAllRegisterCourseRequests); // danh sách đăng ký học dành cho gia sư
+router.get('/course/student/registerRequests', isAuth, userController.getRegisterRequestsOfStudent); // danh sách đăng ký học dành cho học sinh
+router.delete('/course/registerRequests/:registerRequset_id', isAuth, userController.removeRegisterCourseRequest); // hủy đăng ký học
+
 router.get('/course/:course_id', isAuth, userController.getCourseById);
 
 router.put('/addToCourse', isAuth, userController.addStudentToCourse);

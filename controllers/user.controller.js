@@ -281,8 +281,9 @@ module.exports = {
   removeRegisterCourseRequest: async (req, res, next) => {
     const { registerRequset_id } = req.params;
     const registerRequest = await RegisterCourse.findOne({ _id: registerRequset_id });
-
-    if (registerRequest.tutor_id.equals(req.user._id)) {
+    console.log("go in");
+    console.log("registerRequset_id: ", registerRequset_id);
+    if (registerRequest && (registerRequest.tutor_id.equals(req.user._id) || registerRequest.student_id.equals(req.user._id))) {
       registerRequest.remove((err, doc) => {
         if (err) {
           return res.status(500).send({ message: "Failed to remove register request!" });
@@ -292,13 +293,6 @@ module.exports = {
       })
     } else {
       return res.status(400).send({ message: "Request not found!" });
-    }
-    const registerCourseRequests = await RegisterCourse.find({ 'tutor_id': req.user._id });
-    if (registerCourseRequests) {
-      console.log("register: ", registerCourseRequests);
-      return res.status(200).send({ registerCourseRequests });  
-    } else {
-      return res.status(400).send({ message: 'Failed to get all of register-course requests!' })
     }
   },
 
