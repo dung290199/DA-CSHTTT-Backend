@@ -411,6 +411,16 @@ module.exports = {
     }
   },
 
+  getUserById: async (req, res, next) => {
+    const { id } = req.params;
+    const user = await User.findOne({ _id: id, role: req.user.role });
+    if (user) {
+      return res.status(200).send({ user });
+    } else {
+      return res.status(400).send({ message: 'User not found!' })
+    }
+  },
+
   getAllStudents: async (req, res, next) => {
     const tutors = await User.find({ role: 'STUDENT' });
     if (tutors) {

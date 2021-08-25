@@ -27,14 +27,14 @@ router.put('/addToCourse', isAuth, userController.addStudentToCourse);
 router.post('/schedule/new', isAuth, userController.createSchedule);
 router.get('/create-admin', userController.createAdmin);
 
-// Admin
+router.get('/info/:id', isAuth, userController.getUserById);
+
 router.get('/tutor/all', isAuth, userController.getAllTutors);
 router.delete('/tutor/:id', isAuth, userController.deleteTutorById);
 
 router.get('/student/all', isAuth, userController.getAllStudents);
 router.delete('/tutor/:id', isAuth, userController.deleteStudentById);
 
-//end admin
 
 router.put("/:id/password", isAuth, userController.updatePassword);
 router.put("/:id", isAuth, userController.updateUser);
