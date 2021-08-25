@@ -413,7 +413,7 @@ module.exports = {
 
   getUserById: async (req, res, next) => {
     const { id } = req.params;
-    const user = await User.findOne({ _id: id, role: req.user.role });
+    const user = await User.findOne({ _id: id });
     if (user) {
       return res.status(200).send({ user });
     } else {
