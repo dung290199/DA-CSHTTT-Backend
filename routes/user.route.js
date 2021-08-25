@@ -15,7 +15,8 @@ router.get('/course/all', isAuth, userController.getAllCourses);
 router.get('/course', isAuth, userController.getCourses);
 router.post('/course/new', isAuth, userController.createCourse);
 router.post('/course/register', isAuth, userController.registerCourse);
-router.get('/course/registerRequests', isAuth, userController.getAllRegisterCourseRequests);
+router.get('/course/tutor/registerRequests', isAuth, userController.getAllRegisterCourseRequests);
+router.get('/course/student/registerRequests', isAuth, userController.getRegisterRequestsOfStudent);
 
 router.delete('/course/registerRequests/:registerRequset_id', isAuth, userController.removeRegisterCourseRequest);
 router.get('/course/:course_id', isAuth, userController.getCourseById);

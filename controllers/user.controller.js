@@ -52,9 +52,9 @@ module.exports = {
     user.address = address,
     user.gender = gender,
     user.picture = picture
-    const updatedUser = await user.save();
 
-    if (updatedUser) {
+    try {
+      const updatedUser = await user.save();
       let data = {
         username: updatedUser.username,
         email: updatedUser.email,
@@ -74,8 +74,10 @@ module.exports = {
       console.log("data", data);
       return res.status(200)
               .send({ data, message: "Update user success!" });
+    } catch(e) {
+      console.log(e);
+      return res.send({ message: "Update user failed!!" });
     }
-    return res.send({ message: "Update user failed!!" });
   },
 
   updatePassword: async (req, res, next) => {
@@ -90,9 +92,9 @@ module.exports = {
       return res.status(401).send({message: "Old password is not exact!"});
     }
     user.password = await hashPassword(newPassword);
-    const updatedUser = await user.save();
 
-    if (updatedUser) {
+    try {
+      const updatedUser = await user.save();
       let data = {
         _id: updatedUser.id,
         username: updatedUser.username,
@@ -111,8 +113,10 @@ module.exports = {
       data = cv ? Object.assign({}, data, { ...data, CV: user.CV }) : data;
       return res.status(200)
               .send({ data: data, message: "Change password success!" });
+    } catch(e) {
+      console.log(e);
+      return res.send({message: "Change password failed!"});
     }
-    return res.send({message: "Change password failed!"});
   },
 
   createAdmin: async (req, res, next) => {
@@ -129,8 +133,8 @@ module.exports = {
       phone: "01478963215"
     });
     
-    const newAdmin = await admin.save();
-    if (newAdmin) {
+    try {
+      const newAdmin = await admin.save();
       const token = getToken(newAdmin);
       let data = {
         token: token,
@@ -151,7 +155,8 @@ module.exports = {
       return res.status(201)
               .header('auth-token', token)
               .send(data);
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(401).send({ message: "Invalid admin data" });
     }
   },
@@ -163,21 +168,23 @@ module.exports = {
       time: time,
     });
 
-    const newSchedule = await schedule.save();
-    if (newSchedule) {
+    try {
+      const newSchedule = await schedule.save();
       return res.status(201).send({
         _id: newSchedule.id,
         day: newSchedule.day,
         time: newSchedule.time,
         time_created: newSchedule.time_created,
       });
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(401).send({ message: "Invalid schedule data" });
     }
   },
 
   createCourse: async (req, res, next) => {
     const { name, tutorName, students, schedules, subject, grade, address } = req.body;
+    console.log("req.body: ", req.body, req.user);
     const course = new Course({
       tutor: {
         _id: req.user._id,
@@ -191,8 +198,10 @@ module.exports = {
       address: address
     });
 
-    const newCourse = await course.save();
-    if (newCourse) {
+    console.log(course);
+    try {
+      const newCourse = await course.save();
+      console.log("newCourse: ", newCourse);
       return res.status(200).send({
         _id: newCourse.id,
         name: newCourse.name,
@@ -206,7 +215,8 @@ module.exports = {
         grade: newCourse.grade,
         address: newCourse.address
       })
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(401).send({ message: 'Invalid course data!' });
     }
   },
@@ -257,6 +267,17 @@ module.exports = {
     }
   },
 
+  getRegisterRequestsOfStudent: async (req, res, next) => {
+    console.log("go in");
+    const registerCourseRequests = await RegisterCourse.find({ 'student_id': req.user._id });
+    if (registerCourseRequests) {
+      console.log("register: ", registerCourseRequests);
+      return res.status(200).send({ registerCourseRequests });  
+    } else {
+      return res.status(400).send({ message: 'Failed to get all of register-course requests!' })
+    }
+  },
+
   removeRegisterCourseRequest: async (req, res, next) => {
     const { registerRequset_id } = req.params;
     const registerRequest = await RegisterCourse.findOne({ _id: registerRequset_id });
@@ -289,10 +310,11 @@ module.exports = {
       course_id: course_id
     });
 
-    const savedRegisterCourse = await registerCourse.save();
-    if (savedRegisterCourse) {
+    try {
+      const savedRegisterCourse = await registerCourse.save();
       return res.status(200).send({ savedRegisterCourse });
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(400).send({ message: 'Failed to create request to register course!' })
     }
   },
@@ -307,13 +329,14 @@ module.exports = {
     studentArray.push(student);
     console.log('studentArray: ', studentArray);
     course.students = studentArray;
-    const savedCourse = await course.save();
-    if (savedCourse) {
+    try {
       console.log('success');
+      const savedCourse = await course.save();
       return res.status(200).send({
         _id: savedCourse.id,
       })
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(400).send({ message: 'Failed to add student to class!' })
     }
   },
@@ -322,14 +345,15 @@ module.exports = {
     const { name } = req.body;
 
     const grade = new Grade({ name: name });
-    const newGrade = await grade.save();
-    if (newGrade) {
+    try {
+      const newGrade = await grade.save();
       console.log('newGrade: ', newGrade);
       return res.status(200).send({
         _id: newGrade.id,
         name: newGrade.name
       })
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(400).send({ message: 'Failed to create grade!' })
     }
   },
@@ -347,13 +371,14 @@ module.exports = {
     const { name } = req.body;
 
     const subject = new Subject({ name: name });
-    const newSubject = await subject.save();
-    if (newSubject) {
+    try {
+      const newSubject = await subject.save();
       return res.status(200).send({
         _id: newSubject.id,
         name: newSubject.name
       })
-    } else {
+    } catch(e) {
+      console.log(e);
       return res.status(400).send({ message: 'Failed to create grade!' })
     }
   },
