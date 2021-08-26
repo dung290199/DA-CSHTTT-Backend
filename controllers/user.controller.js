@@ -317,6 +317,7 @@ module.exports = {
     console.log('request: ', req);
     const { student_id, course_id } = req.body;
     console.log('student, course: ', student_id, course_id);
+    const registerRequest = await RegisterCourse.find({ student_id });
     const student = await User.findOne({ _id: student_id });
     const course = await Course.findOne({ _id: course_id });
     const studentArray = course.students;
@@ -326,6 +327,13 @@ module.exports = {
     try {
       console.log('success');
       const savedCourse = await course.save();
+      registerRequest.remove((err, doc) => {
+        if (err) {
+          return res.status(500).send({ message: "Failed to remove register request!" });
+        } else {
+          return res.status(200).send({ message: "Delete success" });
+        }
+      })
       return res.status(200).send({
         _id: savedCourse.id,
       })
