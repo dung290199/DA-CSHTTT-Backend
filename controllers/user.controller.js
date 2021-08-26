@@ -413,7 +413,9 @@ module.exports = {
 
   getUserById: async (req, res, next) => {
     const { id } = req.params;
+    console.log("id: ", id);
     const user = await User.findOne({ _id: id });
+    console.log("user: ", user);
     if (user) {
       return res.status(200).send({ user });
     } else {
@@ -421,10 +423,19 @@ module.exports = {
     }
   },
 
+  // getOwnedStudents: async (req, res, next) => {
+  //   const tutors = await User.find({ role: 'STUDENT' });
+  //   if (tutors) {
+  //     return res.status(200).send({ tutors });
+  //   } else {
+  //     return res.status(400).send({ message: 'Failed to get list of students!' })
+  //   }
+  // },
+
   getAllStudents: async (req, res, next) => {
-    const tutors = await User.find({ role: 'STUDENT' });
-    if (tutors) {
-      return res.status(200).send({ tutors });
+    const students = await User.find({ role: 'STUDENT' });
+    if (students) {
+      return res.status(200).send({ students });
     } else {
       return res.status(400).send({ message: 'Failed to get list of students!' })
     }
