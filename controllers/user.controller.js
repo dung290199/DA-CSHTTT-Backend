@@ -314,33 +314,43 @@ module.exports = {
   },
 
   addStudentToCourse: async (req, res, next) => {
-    console.log('request: ', req);
-    const { student_id, course_id } = req.body;
-    console.log('student, course: ', student_id, course_id);
-    const registerRequest = await RegisterCourse.find({ student_id });
-    const student = await User.findOne({ _id: student_id });
-    const course = await Course.findOne({ _id: course_id });
-    const studentArray = course.students;
-    studentArray.push(student);
-    console.log('studentArray: ', studentArray);
-    course.students = studentArray;
-    try {
-      console.log('success');
-      const savedCourse = await course.save();
-      registerRequest.remove((err, doc) => {
-        if (err) {
-          return res.status(500).send({ message: "Failed to remove register request!" });
-        } else {
-          return res.status(200).send({ message: "Delete success" });
+    // console.log('request: ', req);
+    const { _id } = req.body;
+    // console.log('student, course: ', student_id, course_id);
+    const registerRequest = await RegisterCourse.findOne({ _id });
+    if (registerRequest) {
+      console.log("registerRequest: ", registerRequest);
+      const student = await User.findOne({ _id: registerRequest.student_id });
+      const course = await Course.findOne({ _id: registerRequest.course_id });
+      console.log("student: ", student);
+      console.log("course: ", course);
+      if (course && student) {
+        const studentArray = course.students;
+        studentArray.push(student);
+        // console.log('studentArray: ', studentArray);
+        course.students = studentArray;
+        try {
+          console.log('success');
+          const savedCourse = await course.save();
+          registerRequest.remove((err, doc) => {
+            if (err) {
+              return res.status(500).send({ message: "Failed to remove register request!" });
+            } else {
+              return res.status(200).send({ message: "Delete success" });
+            }
+          })
+          return res.status(200).send({
+            _id: savedCourse.id,
+          })
+        } catch(e) {
+          console.log(e);
+          return res.status(400).send({ message: 'Failed to add student to class!' })
         }
-      })
-      return res.status(200).send({
-        _id: savedCourse.id,
-      })
-    } catch(e) {
-      console.log(e);
-      return res.status(400).send({ message: 'Failed to add student to class!' })
+      }
     }
+
+    return res.status(400).send({ message: 'Register request is not existed!' });
+    
   },
 
   createGrade: async (req, res, next) => {
