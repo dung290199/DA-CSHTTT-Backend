@@ -291,6 +291,10 @@ module.exports = {
           return res.status(200).send({ message: "Delete success" });
         }
       })
+
+      return res.status(200).send({
+        _id: registerRequset_id,
+      })
     } else {
       return res.status(400).send({ message: "Request not found!" });
     }
